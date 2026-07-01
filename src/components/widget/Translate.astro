@@ -1,5 +1,5 @@
-<!-- 页面翻译组件 - 基于 Google Translate -->
-<!-- 在侧边栏显示，访问者可一键切换语言 -->
+<!-- 页面翻译组件 -->
+<!-- 在侧边栏显示，点击选择语言后跳转到 Google 翻译页面 -->
 
 ---
 interface Props {
@@ -11,72 +11,66 @@ const { className, style } = Astro.props;
 
 <div id="translate-container" class:list={["card-base p-3", className]} {style}>
     <div class="text-sm font-bold mb-2 px-1 text-black/70 dark:text-white/70">🌐 语言 / Language</div>
-    <div id="google_translate_element" class="translate-selector"></div>
+    <select id="language-select" class="translate-selector" aria-label="选择语言">
+        <option value="">— 选择语言 —</option>
+        <option value="zh-CN">中文（简体）</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="th">ไทย</option>
+        <option value="vi">Tiếng Việt</option>
+        <option value="id">Bahasa Indonesia</option>
+    </select>
 </div>
 
 <script>
 (function() {
-    function loadGoogleTranslate() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'zh-CN',
-            includedLanguages: 'zh-CN,en,ja,ko,es,fr,de,pt,ru,th,vi,id',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false,
-        }, 'google_translate_element');
-    }
+    const select = document.getElementById('language-select');
+    if (!select) return;
 
-    const script = document.createElement('script');
-    script.src = 'https://translate.google.com/translate_a/element.js?cb=initGoogleTranslate';
-    script.async = true;
-    document.body.appendChild(script);
+    select.addEventListener('change', function() {
+        const lang = this.value;
+        if (!lang) return;
 
-    window.initGoogleTranslate = loadGoogleTranslate;
+        // 获取当前页面 URL
+        const currentUrl = window.location.href;
+
+        // 构建 Google 翻译 URL
+        const translateUrl = 'https://translate.google.com/translate?hl=' + lang +
+            '&sl=auto' +
+            '&tl=' + lang +
+            '&u=' + encodeURIComponent(currentUrl) +
+            '&prev=_home';
+
+        // 在新窗口打开翻译
+        window.open(translateUrl, '_blank');
+    });
 })();
 </script>
 
 <style>
-    /* 去除 Google 品牌元素 */
-    #google_translate_element .goog-te-gadget img,
-    #google_translate_element .goog-te-gadget-simple img,
-    #google_translate_element .goog-te-gadget-icon {
-        display: none !important;
+    #language-select {
+        @apply w-full border border-black/15 dark:border-white/20 rounded-lg px-4 py-2.5
+               bg-transparent text-sm text-black/70 dark:text-white/70
+               transition cursor-pointer appearance-none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 14px;
+        padding-right: 32px;
     }
-    #google_translate_element .goog-te-gadget span:first-child:not(.goog-te-combo) {
-        display: none !important;
+    #language-select:hover {
+        @apply border-[var(--primary)];
     }
-    /* 纯下拉列表样式 */
-    #google_translate_element .goog-te-gadget-simple {
-        @apply flex items-center border border-black/15 dark:border-white/20 rounded-lg px-4 py-2.5 bg-transparent transition hover:border-[var(--primary)] cursor-pointer w-full;
-        border-image: none !important;
+    #language-select:focus {
+        @apply outline-none border-[var(--primary)] ring-1 ring-[var(--primary)];
     }
-    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value {
-        @apply text-sm text-black/70 dark:text-white/70;
-    }
-    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value span {
-        @apply text-sm text-black/70 dark:text-white/70;
-    }
-    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value span:last-child {
-        @apply ml-1 text-[10px];
-    }
-    /* 下拉菜单样式 */
-    .goog-te-menu-frame {
-        @apply shadow-lg rounded-xl overflow-hidden;
-    }
-    .goog-te-menu2 {
-        @apply border-none shadow-none !important;
-    }
-    .goog-te-menu2-item div, .goog-te-menu2-item-selected div {
-        @apply py-2 px-4 text-sm;
-    }
-    .goog-te-menu2-item-selected {
-        @apply font-bold;
-    }
-    /* 隐藏顶部翻译条 */
-    .goog-te-banner-frame.skiptranslate,
-    #goog-gt-tt {
-        display: none !important;
-    }
-    body {
-        top: 0px !important;
+    #language-select option {
+        @apply text-black dark:bg-gray-800 dark:text-white;
     }
 </style>
