@@ -1,20 +1,79 @@
----
-// Giscus 评论组件
-// 基于 GitHub Discussions 的评论系统
----
+<!-- Giscus 评论组件，支持动态主题切换 -->
 
-<script src="https://giscus.app/client.js"
-        data-repo="codeandink0728/pixel-and-paper"
-        data-repo-id="R_kgDOTKpFIA"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOTKpFIM4DASwn"
-        data-mapping="url"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
+<div id="giscus-container"></div>
+
+<script>
+(function() {
+	const GISCUS_CONFIG = {
+		repo: "codeandink0728/pixel-and-paper",
+		repoId: "R_kgDOTKpFIA",
+		category: "Announcements",
+		categoryId: "DIC_kwDOTKpFIM4DASwn",
+		mapping: "url",
+		strict: "0",
+		reactionsEnabled: "1",
+		emitMetadata: "0",
+		inputPosition: "bottom",
+		lang: "zh-CN",
+	};
+
+	function getGiscusTheme() {
+		const theme = localStorage.getItem("theme") || "auto";
+		if (theme === "dark") return "dark";
+		if (theme === "light") return "light";
+		// auto: follow system
+		return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+	}
+
+	function loadGiscus() {
+		const container = document.getElementById("giscus-container");
+		if (!container || container.querySelector("iframe")) return;
+
+		const script = document.createElement("script");
+		script.src = "https://giscus.app/client.js";
+		script.setAttribute("data-repo", GISCUS_CONFIG.repo);
+		script.setAttribute("data-repo-id", GISCUS_CONFIG.repoId);
+		script.setAttribute("data-category", GISCUS_CONFIG.category);
+		script.setAttribute("data-category-id", GISCUS_CONFIG.categoryId);
+		script.setAttribute("data-mapping", GISCUS_CONFIG.mapping);
+		script.setAttribute("data-strict", GISCUS_CONFIG.strict);
+		script.setAttribute("data-reactions-enabled", GISCUS_CONFIG.reactionsEnabled);
+		script.setAttribute("data-emit-metadata", GISCUS_CONFIG.emitMetadata);
+		script.setAttribute("data-input-position", GISCUS_CONFIG.inputPosition);
+		script.setAttribute("data-theme", getGiscusTheme());
+		script.setAttribute("data-lang", GISCUS_CONFIG.lang);
+		script.setAttribute("crossorigin", "anonymous");
+		script.async = true;
+		container.appendChild(script);
+	}
+
+	function updateGiscusTheme() {
+		const iframe = document.querySelector("#giscus-container iframe");
+		if (iframe) {
+			iframe.contentWindow.postMessage({
+				giscus: { setConfig: { theme: getGiscusTheme() } }
+			}, "https://giscus.app");
+		}
+	}
+
+	// Listen for theme changes via localStorage
+	window.addEventListener("storage", function(e) {
+		if (e.key === "theme") {
+			updateGiscusTheme();
+		}
+	});
+
+	// Also listen for Swup page transitions (Fuwari uses Swup for navigation)
+	document.addEventListener("swup:content:replace", function() {
+		// Reload Giscus on page navigation
+		loadGiscus();
+	});
+
+	// Initial load
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", loadGiscus);
+	} else {
+		loadGiscus();
+	}
+})();
 </script>

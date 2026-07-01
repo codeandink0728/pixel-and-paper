@@ -43,17 +43,25 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
+		{
+			name: "项目",
+			url: "/projects/",
+		},
+		{
+			name: "友链",
+			url: "/friends/",
+		},
 		LinkPreset.About,
 		{
 			name: "GitHub",
-			url: "https://github.com/codeandink0728", // Internal links should not include the base path, as it is automatically added
-			external: true, // Show an external link icon and will open in a new tab
+			url: "https://github.com/codeandink0728",
+			external: true,
 		},
 	],
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/demo-avatar.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
+	avatar: "assets/images/avatar.svg", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 	name: "codeandink0728",
 	bio: "一个混合体，一半技术一半生活",
 	links: [
