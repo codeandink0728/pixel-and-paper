@@ -1,0 +1,64 @@
+<!-- 页面翻译组件 - 基于 Google Translate -->
+<!-- 在侧边栏显示，访问者可一键切换语言 -->
+
+---
+interface Props {
+	class?: string;
+	style?: string;
+}
+const { className, style } = Astro.props;
+---
+
+<div id="translate-container" class:list={["card-base p-3", className]} {style}>
+    <div class="text-sm font-bold mb-2 px-1 text-black/70 dark:text-white/70">🌐 语言 / Language</div>
+    <div id="google_translate_element"></div>
+</div>
+
+<script>
+(function() {
+    // 加载 Google Translate
+    function loadGoogleTranslate() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'zh-CN',
+            includedLanguages: 'zh-CN,en,ja,ko,es,fr,de,pt,ru,th,vi,id',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false,
+        }, 'google_translate_element');
+    }
+
+    // 注入 Google Translate 脚本
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=initGoogleTranslate';
+    script.async = true;
+    document.body.appendChild(script);
+
+    // 全局回调
+    window.initGoogleTranslate = loadGoogleTranslate;
+})();
+</script>
+
+<style>
+    /* 美化 Google Translate 下拉菜单，适配博客主题 */
+    #google_translate_element {
+        @apply text-sm;
+    }
+    #google_translate_element .skiptranslate {
+        @apply text-black/70 dark:text-white/70;
+    }
+    #google_translate_element .goog-te-gadget-simple {
+        @apply border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 bg-transparent;
+    }
+    #google_translate_element .goog-te-gadget-simple img {
+        @apply hidden;
+    }
+    #google_translate_element .goog-te-gadget-simple span {
+        @apply text-sm;
+    }
+    /* 隐藏 Google 翻译顶部条 */
+    .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+    }
+    body {
+        top: 0px !important;
+    }
+</style>
