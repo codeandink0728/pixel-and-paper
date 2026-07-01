@@ -11,12 +11,11 @@ const { className, style } = Astro.props;
 
 <div id="translate-container" class:list={["card-base p-3", className]} {style}>
     <div class="text-sm font-bold mb-2 px-1 text-black/70 dark:text-white/70">🌐 语言 / Language</div>
-    <div id="google_translate_element"></div>
+    <div id="google_translate_element" class="translate-selector"></div>
 </div>
 
 <script>
 (function() {
-    // 加载 Google Translate
     function loadGoogleTranslate() {
         new google.translate.TranslateElement({
             pageLanguage: 'zh-CN',
@@ -26,36 +25,55 @@ const { className, style } = Astro.props;
         }, 'google_translate_element');
     }
 
-    // 注入 Google Translate 脚本
     const script = document.createElement('script');
     script.src = 'https://translate.google.com/translate_a/element.js?cb=initGoogleTranslate';
     script.async = true;
     document.body.appendChild(script);
 
-    // 全局回调
     window.initGoogleTranslate = loadGoogleTranslate;
 })();
 </script>
 
 <style>
-    /* 美化 Google Translate 下拉菜单，适配博客主题 */
-    #google_translate_element {
-        @apply text-sm;
+    /* 去除 Google 品牌元素 */
+    #google_translate_element .goog-te-gadget img,
+    #google_translate_element .goog-te-gadget-simple img,
+    #google_translate_element .goog-te-gadget-icon {
+        display: none !important;
     }
-    #google_translate_element .skiptranslate {
-        @apply text-black/70 dark:text-white/70;
+    #google_translate_element .goog-te-gadget span:first-child:not(.goog-te-combo) {
+        display: none !important;
     }
+    /* 纯下拉列表样式 */
     #google_translate_element .goog-te-gadget-simple {
-        @apply border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 bg-transparent;
+        @apply flex items-center border border-black/15 dark:border-white/20 rounded-lg px-4 py-2.5 bg-transparent transition hover:border-[var(--primary)] cursor-pointer w-full;
+        border-image: none !important;
     }
-    #google_translate_element .goog-te-gadget-simple img {
-        @apply hidden;
+    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value {
+        @apply text-sm text-black/70 dark:text-white/70;
     }
-    #google_translate_element .goog-te-gadget-simple span {
-        @apply text-sm;
+    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value span {
+        @apply text-sm text-black/70 dark:text-white/70;
     }
-    /* 隐藏 Google 翻译顶部条 */
-    .goog-te-banner-frame.skiptranslate {
+    #google_translate_element .goog-te-gadget-simple .goog-te-menu-value span:last-child {
+        @apply ml-1 text-[10px];
+    }
+    /* 下拉菜单样式 */
+    .goog-te-menu-frame {
+        @apply shadow-lg rounded-xl overflow-hidden;
+    }
+    .goog-te-menu2 {
+        @apply border-none shadow-none !important;
+    }
+    .goog-te-menu2-item div, .goog-te-menu2-item-selected div {
+        @apply py-2 px-4 text-sm;
+    }
+    .goog-te-menu2-item-selected {
+        @apply font-bold;
+    }
+    /* 隐藏顶部翻译条 */
+    .goog-te-banner-frame.skiptranslate,
+    #goog-gt-tt {
         display: none !important;
     }
     body {
