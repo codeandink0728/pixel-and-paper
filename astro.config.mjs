@@ -26,7 +26,7 @@ import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-cop
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://pixel-and-paper.vercel.app/",
+	site: "https://pixelandpaper.vercel.app/",
 	base: "/",
 	trailingSlash: "always",
 	integrations: [
